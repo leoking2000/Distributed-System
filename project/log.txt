@@ -1,0 +1,2 @@
+Wed Mar 30 14:18:58 EEST 2022 [Info]: Start info
+Wed Mar 30 14:18:58 EEST 2022 [Error]: aaaaaaaaAAAAA

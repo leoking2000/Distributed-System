@@ -17,6 +17,11 @@ public class Logger
         Get().Log("[Error]", msg);
     }
 
+    public static void Close()
+    {
+        Get().writer.close();
+    }
+
     public void Log(String tag, String msg)
     {
         String output = Calendar.getInstance().getTime().toString() + " " + tag + ": " + msg;
