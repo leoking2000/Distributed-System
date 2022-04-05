@@ -17,8 +17,8 @@ public class Main
         try
         {
             ArrayList<FileChunk> log_file = FileChunk.Load("CG_Project.mp4");
-            FileChunk.Store("CG_Project_copy.mp4",log_file);
 
+            FileChunk.Store("CG_Project_copy.mp4",log_file);
         } catch (IOException e)
         {
             e.printStackTrace();
