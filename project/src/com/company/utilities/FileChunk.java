@@ -1,12 +1,11 @@
 package com.company.utilities;
 
-import java.io.File;
-import java.io.IOException;
+import java.io.*;
 import java.nio.file.Files;
 import java.nio.file.StandardOpenOption;
 import java.util.ArrayList;
 
-public class FileChunk
+public class FileChunk implements Serializable
 {
     public static final int MAX_CHUNK_SIZE = 512; // 0.5 kb
 

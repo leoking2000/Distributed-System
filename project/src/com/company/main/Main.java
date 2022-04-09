@@ -1,28 +1,34 @@
 package com.company.main;
 
 import com.company.utilities.*;
-
-import java.io.IOException;
-import java.util.ArrayList;
+import com.company.EventDeliverySystem.*;
 
 public class Main
 {
 
     public static void main(String[] args)
     {
-        Logger.LogInfo("Start info");
-        Logger.LogError("aaaaaaaaAAAAA");
-        Logger.Close();
-
-        try
+        if(args[0].equals("Broker"))
         {
-            ArrayList<FileChunk> log_file = FileChunk.Load("CG_Project.mp4");
+            Logger.Init("Broker_log.txt");
 
-            FileChunk.Store("CG_Project_copy.mp4",log_file);
-        } catch (IOException e)
-        {
-            e.printStackTrace();
+            Broker b = new Broker(new Address("127.0.0.1", 4321));
+
+            b.start();
+
         }
+        else if (args[0].equals("user"))
+        {
+            Logger.Init("user_log.txt");
+
+            new Publisher().run();
+        }
+        else
+        {
+            throw new RuntimeException("Please specify role (server/user)");
+        }
+
+        Logger.Close();
 
     }
 }

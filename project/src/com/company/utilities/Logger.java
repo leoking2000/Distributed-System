@@ -1,12 +1,21 @@
 package com.company.utilities;
 
-import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.io.PrintWriter;
-import java.io.UnsupportedEncodingException;
+import java.nio.charset.StandardCharsets;
 import java.util.Calendar;
 
 public class Logger
 {
+    public static void Init(String logFile)
+    {
+        try {
+            Get().writer = new PrintWriter(logFile, StandardCharsets.UTF_8);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
     public static void LogInfo(String msg)
     {
         Get().Log("[Info]", msg);
@@ -24,22 +33,16 @@ public class Logger
 
     public void Log(String tag, String msg)
     {
-        String output = Calendar.getInstance().getTime().toString() + " " + tag + ": " + msg;
+        String output = Calendar.getInstance().getTime() + " " + tag + ": " + msg;
         writer.println(output);
         System.out.println(output);
     }
 
-    private PrintWriter writer;
+    private PrintWriter writer = null;
 
     private Logger()
     {
-        try {
-            writer = new PrintWriter("log.txt", "UTF-8");
-        } catch (FileNotFoundException e) {
-            e.printStackTrace();
-        } catch (UnsupportedEncodingException e) {
-            e.printStackTrace();
-        }
+
     }
 
     private static Logger theLogger;
