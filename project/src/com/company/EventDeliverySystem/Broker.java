@@ -1,6 +1,5 @@
 package com.company.EventDeliverySystem;
 
-import com.company.utilities.*;
 import java.io.*;
 import java.net.*;
 

@@ -1,42 +1,70 @@
 package com.company.EventDeliverySystem;
 
-import com.company.utilities.FileChunk;
+import com.company.EventDeliverySystem.ValueTypes.*;
+import com.company.utilities.Logger;
 
 import java.io.*;
 import java.net.*;
 import java.util.ArrayList;
+import java.util.Scanner;
 
-public class Publisher
+public class Publisher extends Thread
 {
+    Address address;
+    Socket requestSocket = null;
+    ObjectOutputStream out = null;
+    ObjectInputStream in = null;
+
+    Value value;
+
+    public Publisher(Value value)
+    {
+        this.address = new Address("127.0.0.1", 8989);
+        this.value = value;
+    }
+
+
+    public void Send(Value value) throws IOException, ClassNotFoundException {
+        Logger.LogInfo("Sending... " + value.toString());
+
+        // send metadata
+        out.writeObject(value.GetMetaData());
+        out.flush();
+
+        // send chunks
+
+        ArrayList<FileChunk> chunks = value.GenerateChunks();
+
+        for (FileChunk chunk : chunks)
+        {
+            out.writeObject(chunk);
+            out.flush();
+        }
+
+        try{
+            String responed = (String) in.readObject();
+            Logger.LogInfo("Server responed " + responed);
+        }
+        catch (EOFException ignored)
+        {
+
+        }
+    }
+
 
     public void run()
     {
-        Socket requestSocket = null;
-        ObjectOutputStream out = null;
-        ObjectInputStream in = null;
-
         try
         {
-            requestSocket = new Socket("127.0.0.1", 4321);
+            requestSocket = new Socket(address.getIp(), address.getPort());
             out = new ObjectOutputStream(requestSocket.getOutputStream());
             in = new ObjectInputStream(requestSocket.getInputStream());
 
-            ArrayList<FileChunk> chunks = FileChunk.Load("CG_Project.mp4");
-
-            out.writeInt(chunks.size());
-            out.writeObject("CG_Project_copy.mp4");
-
-            for(int i = 0; i < chunks.size(); i++)
-            {
-                out.writeObject(chunks.get(i));
-                out.flush();
-            }
-
-            //System.out.println("Server>" + in.read);
+            Send(value);
 
         } catch (UnknownHostException unknownHost) {
             System.err.println("You are trying to connect to an unknown host!");
-        } catch (IOException ioException) {
+        } catch (IOException | ClassNotFoundException ioException) {
             ioException.printStackTrace();
         } finally {
             try {

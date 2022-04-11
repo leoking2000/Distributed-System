@@ -1,4 +1,4 @@
-package com.company.utilities;
+package com.company.EventDeliverySystem;
 
 public class Address
 {
