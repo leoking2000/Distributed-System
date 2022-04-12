@@ -13,8 +13,9 @@ public class ActionsForClients extends Thread
 {
     ObjectInputStream in;
     ObjectOutputStream out;
+    Broker b;
 
-    public ActionsForClients(Socket connection)
+    public ActionsForClients(Socket connection, Broker b)
     {
         try
         {
@@ -32,6 +33,7 @@ public class ActionsForClients extends Thread
     {
         Logger.LogInfo(value.toString());
     }
+
 
     public void run()
     {
@@ -54,6 +56,9 @@ public class ActionsForClients extends Thread
             }
             else {
                 DebugLog(v);
+
+                String topic = v.GetMetaData().getTopicName();
+                b.GetChat(topic).addPost(v);
             }
 
             out.writeObject("OK");

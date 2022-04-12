@@ -17,9 +17,9 @@ public class Publisher extends Thread
 
     Value value;
 
-    public Publisher(Value value)
+    public Publisher(Value value, int port)
     {
-        this.address = new Address("127.0.0.1", 8989);
+        this.address = new Address("127.0.0.1", port);
         this.value = value;
     }
 
