@@ -27,6 +27,9 @@ public class Publisher extends Thread
     public void Send(Value value) throws IOException, ClassNotFoundException {
         Logger.LogInfo("Sending... " + value.toString());
 
+        out.writeObject("Accept Value");
+        out.flush();
+
         // send metadata
         out.writeObject(value.GetMetaData());
         out.flush();

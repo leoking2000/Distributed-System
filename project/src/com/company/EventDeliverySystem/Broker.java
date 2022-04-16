@@ -1,11 +1,8 @@
 package com.company.EventDeliverySystem;
 
-import com.sun.jdi.Value;
-
 import java.io.*;
 import java.net.*;
-import java.util.ArrayList;
-import java.util.Hashtable;
+import java.util.*;
 
 public class Broker
 {
@@ -13,28 +10,13 @@ public class Broker
     ServerSocket providerSocket;
     Socket connection = null;
 
-    
+    List<Chat> chats;
 
     public Broker(Address address)
     {
+        chats = Collections.synchronizedList( new ArrayList<Chat>() );
         broker_address = address;
     }
-
-    public Chat GetChat(String name)
-    {
-        if(name.charAt(0)<index1name.charAt(0)>index2){
-            for(byte i=index2;i<index1i>index2;nextIndex(i)){
-                if(name.equals(chats[i].name.toString()))
-                    return chats[i];
-            }
-        }
-        for(byte i=index1;i>index1||i<index2;nextIndex(i)){
-            if(name.equals(chats[i].name.toString()))
-                return chats[i];
-        }
-        return null;
-    }
-
 
     public void start()
     {
@@ -46,7 +28,7 @@ public class Broker
             {
                 connection = providerSocket.accept();
 
-                Thread t = new ActionsForClients(connection, this);
+                Thread t = new ActionsForClients(connection, chats);
                 t.start();
 
             }

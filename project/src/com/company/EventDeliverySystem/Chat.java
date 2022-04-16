@@ -3,32 +3,38 @@ package com.company.EventDeliverySystem;
 import com.company.EventDeliverySystem.ValueTypes.Value;
 import com.company.utilities.Logger;
 
-import java.util.ArrayList;
+import java.util.*;
 
 public class Chat
 {
-    ArrayList<Value> data;
-    char[] name; // ??? giati oxi
-    byte BrokerId;
+    private String name;
+    private List<Value> data;
 
-
-    Chat(){
-        data = new ArrayList<Value>();
-        BrokerId=(byte)(this.hashCode()%10);
-        name=new char[11];
-        name[0]=(char) BrokerId;
+    public Chat(String name)
+    {
+        this.name = name;
+        data = Collections.synchronizedList( new ArrayList<Value>() );
     }
 
-    void addPost(Value v){
+    void addPost(Value v)
+    {
         data.add(v);
     }
 
-    void printChat(){
-
+    void printChat()
+    {
         for(Value v : data)
         {
             Logger.LogInfo(v.toString());
         }
 
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public List<Value> getData() {
+        return data;
     }
 }
