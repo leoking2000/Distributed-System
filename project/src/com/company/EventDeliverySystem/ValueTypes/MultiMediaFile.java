@@ -1,10 +1,9 @@
 package com.company.EventDeliverySystem.ValueTypes;
 
-import com.company.utilities.Logger;
+import com.company.main.Logger;
 
 import java.io.File;
 import java.io.IOException;
-import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.util.ArrayList;
 

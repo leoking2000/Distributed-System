@@ -1,4 +1,4 @@
-package com.company.utilities;
+package com.company.main;
 
 import java.io.IOException;
 import java.io.PrintWriter;
@@ -33,7 +33,7 @@ public class Logger
 
     public void Log(String tag, String msg)
     {
-        String output = Calendar.getInstance().getTime() + " " + tag + ": " + msg;
+        String output = tag + ": " + msg;
         writer.println(output);
         System.out.println(output);
     }

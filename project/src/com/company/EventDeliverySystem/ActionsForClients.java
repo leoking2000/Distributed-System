@@ -3,7 +3,7 @@ package com.company.EventDeliverySystem;
 import com.company.EventDeliverySystem.ValueTypes.FileChunk;
 import com.company.EventDeliverySystem.ValueTypes.MetaData;
 import com.company.EventDeliverySystem.ValueTypes.Value;
-import com.company.utilities.Logger;
+import com.company.main.Logger;
 
 import java.io.*;
 import java.net.*;

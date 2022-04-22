@@ -1,8 +1,6 @@
 package com.company.main;
 
-import com.company.EventDeliverySystem.Address;
 import com.company.EventDeliverySystem.Broker;
-import com.company.utilities.Logger;
 
 public class BrokerMain
 {
