@@ -1,5 +1,8 @@
 package com.company.EventDeliverySystem;
 
+/*
+ip + post Address
+ */
 public class Address
 {
     private String ip;

@@ -5,14 +5,18 @@ import com.company.main.Logger;
 
 import java.util.*;
 
+/*
+a chat or a topic
+ */
 public class Chat
 {
-    private String name;
-    private List<Value> data;
+    private final String name;
+    private final List<Value> data;
 
     public Chat(String name)
     {
         this.name = name;
+        // we get a synchronizedList because ActionsForClients thread modifies it
         data = Collections.synchronizedList( new ArrayList<Value>() );
     }
 
@@ -34,7 +38,4 @@ public class Chat
         return name;
     }
 
-    public List<Value> getData() {
-        return data;
-    }
 }

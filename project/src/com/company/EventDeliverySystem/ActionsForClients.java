@@ -11,11 +11,16 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
+/*
+handles a broker request
+ */
 public class ActionsForClients extends Thread
 {
     ObjectInputStream in;
     ObjectOutputStream out;
-    List<Chat> chats;
+
+    // a pointer to the list of chats stored by the broker
+    List<Chat> chats; // if this was c++ code, this would be a pointer
 
     public ActionsForClients(Socket connection, List<Chat> chats)
     {
@@ -44,16 +49,15 @@ public class ActionsForClients extends Thread
     {
         try
         {
+            // read the request
             String request = (String) in.readObject();
 
-            switch (request)
-            {
-                case "Accept Value":
-                    AcceptValue();
-                    break;
-                case "pull":
+            switch (request) {
+                case "Accept Value" -> AcceptValue();
+                case "pull" -> {
                     String topic = (String) in.readObject();
                     SendChat(topic);
+                }
             }
 
         }
@@ -82,16 +86,19 @@ public class ActionsForClients extends Thread
     }
 
 
-    private void AcceptValue() throws IOException, ClassNotFoundException {
+    private void AcceptValue() throws IOException, ClassNotFoundException
+    {
+        // read metadata
         MetaData metaData = (MetaData) in.readObject();
 
+        // read the file chunks
         ArrayList<FileChunk> chunks = new ArrayList<>();
-
         for(int i = 0; i < metaData.getNumberOfChunks(); i++)
         {
             chunks.add((FileChunk) in.readObject());
         }
 
+        // recreate value
         Value v = Value.ReCreate(chunks, metaData);
 
         if(v == null)
@@ -105,8 +112,9 @@ public class ActionsForClients extends Thread
 
         DebugLog(v);
 
-        String topic = v.GetMetaData().getTopicName();
+        // store value in the correct chat
 
+        String topic = v.GetMetaData().getTopicName();
         Optional<Chat> chat = chats.stream().
                 filter(p -> p.getName().equals(topic)).
                 findFirst();

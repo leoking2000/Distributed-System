@@ -6,7 +6,9 @@ import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.util.ArrayList;
-
+/*
+ this can be a photo or a video
+ */
 public class MultiMediaFile implements Value
 {
     private byte[] data;

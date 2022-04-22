@@ -10,10 +10,11 @@ public class Broker
     ServerSocket providerSocket;
     Socket connection = null;
 
-    List<Chat> chats;
+    List<Chat> chats; // store all the chats
 
     public Broker(Address address)
     {
+        // we get a synchronizedList because ActionsForClients thread modifies it
         chats = Collections.synchronizedList( new ArrayList<Chat>() );
         broker_address = address;
     }

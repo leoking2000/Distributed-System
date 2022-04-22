@@ -2,14 +2,16 @@ package com.company.EventDeliverySystem.ValueTypes;
 
 import java.io.Serializable;
 import java.util.Date;
-
+/*
+the metadata of a Value
+ */
 public class MetaData implements Serializable
 {
-    private final String UserName;
-    private final String TopicName;
-    private final String DataTypeClassName;
-    private final Date dateCreated;
-    private final int numberOfChunks;
+    private final String UserName; // who send this?
+    private final String TopicName; // the chat name
+    private final String DataTypeClassName; // what type the Value is?
+    private final Date dateCreated; // when was this Created
+    private final int numberOfChunks; // how many chunks this value has
 
     public MetaData(String userName, String topicName, String dataTypeClassName, int numberOfChunks)
     {

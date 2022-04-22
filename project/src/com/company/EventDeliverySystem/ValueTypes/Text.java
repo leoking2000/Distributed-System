@@ -3,6 +3,9 @@ package com.company.EventDeliverySystem.ValueTypes;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 
+/*
+this is a text msg
+ */
 public class Text implements Value
 {
     private final String theText;

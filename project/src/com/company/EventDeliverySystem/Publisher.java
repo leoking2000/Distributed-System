@@ -69,8 +69,6 @@ public class Publisher extends Thread
         return BrokerAddressList.Get(index);
     }
 
-
-
     public void run()
     {
         try
