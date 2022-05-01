@@ -1,6 +1,6 @@
 package com.company.EventDeliverySystem.ValueTypes;
 
-import com.company.main.Logger;
+import com.company.utilities.Logger;
 
 import java.io.File;
 import java.io.IOException;

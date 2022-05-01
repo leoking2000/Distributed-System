@@ -1,6 +1,7 @@
 package com.company.main;
 
 import com.company.EventDeliverySystem.UserNode;
+import com.company.utilities.Logger;
 
 public class UserMain
 {

@@ -1,9 +1,8 @@
-package com.company.main;
+package com.company.utilities;
 
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.nio.charset.StandardCharsets;
-import java.util.Calendar;
 
 public class Logger
 {
@@ -35,7 +34,7 @@ public class Logger
     {
         String output = tag + ": " + msg;
         writer.println(output);
-        System.out.println(output);
+        System.err.println(output);
     }
 
     private PrintWriter writer = null;

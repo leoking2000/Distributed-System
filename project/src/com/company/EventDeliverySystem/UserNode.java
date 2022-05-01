@@ -8,10 +8,12 @@ public class UserNode
 {
     private final String user_name;
 
+    private Publisher publisher;
+
     public UserNode(String name)
     {
         user_name = name;
-
+        publisher = new Publisher(this);
     }
 
     public void start()
@@ -26,19 +28,16 @@ public class UserNode
             System.out.print("Enter text: ");
             String text = in.nextLine();
 
-            Publisher p = new Publisher(new Text(text, user_name, topic));
-            p.start();
-            try {
-                p.join();
-            } catch (InterruptedException e) {
-                throw new RuntimeException(e);
-            }
+            publisher.push(new Text(text, user_name, topic));
 
-            //in.nextLine();
+            in.nextLine();
         }
 
     }
 
-
+    String getUserName()
+    {
+        return user_name;
+    }
 
 }

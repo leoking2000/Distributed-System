@@ -1,7 +1,7 @@
 package com.company.EventDeliverySystem;
 
 import com.company.EventDeliverySystem.ValueTypes.Value;
-import com.company.main.Logger;
+import com.company.utilities.Logger;
 
 import java.util.*;
 

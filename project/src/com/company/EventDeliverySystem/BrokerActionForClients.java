@@ -3,7 +3,8 @@ package com.company.EventDeliverySystem;
 import com.company.EventDeliverySystem.ValueTypes.FileChunk;
 import com.company.EventDeliverySystem.ValueTypes.MetaData;
 import com.company.EventDeliverySystem.ValueTypes.Value;
-import com.company.main.Logger;
+import com.company.utilities.Logger;
+import com.company.utilities.ReceiverAction;
 
 import java.io.*;
 import java.net.*;
@@ -14,29 +15,15 @@ import java.util.Optional;
 /*
 handles a broker request
  */
-public class ActionsForClients extends Thread
+public class BrokerActionForClients extends Thread implements ReceiverAction
 {
-    ObjectInputStream in;
-    ObjectOutputStream out;
+    private final Broker broker;
+    private ObjectInputStream in;
+    private ObjectOutputStream out;
 
-    // a pointer to the list of chats stored by the broker
-    List<Chat> chats; // if this was c++ code, this would be a pointer
-
-    public ActionsForClients(Socket connection, List<Chat> chats)
+    public BrokerActionForClients(Broker broker)
     {
-        try
-        {
-            out = new ObjectOutputStream(connection.getOutputStream());
-            in = new ObjectInputStream(connection.getInputStream());
-
-            this.chats = chats;
-
-            System.out.println("ActionsForClients| created");
-        }
-        catch (IOException e)
-        {
-            e.printStackTrace();
-        }
+       this.broker = broker;
     }
 
     public void DebugLog(Value value)
@@ -44,9 +31,19 @@ public class ActionsForClients extends Thread
         Logger.LogInfo(value.toString());
     }
 
-
-    public void run()
+    @Override
+    public void HandleConnection(Socket s)
     {
+        try
+        {
+            out = new ObjectOutputStream(s.getOutputStream());
+            in = new ObjectInputStream(s.getInputStream());
+        }
+        catch (IOException e)
+        {
+            e.printStackTrace();
+        }
+
         try
         {
             // read the request
@@ -77,7 +74,7 @@ public class ActionsForClients extends Thread
                 ioException.printStackTrace();
             }
         }
-    }// run
+    }
 
 
     private void SendChat(String topic)
@@ -113,6 +110,7 @@ public class ActionsForClients extends Thread
         DebugLog(v);
 
         // store value in the correct chat
+        List<Chat> chats = broker.getChats();
 
         String topic = v.GetMetaData().getTopicName();
         Optional<Chat> chat = chats.stream().
@@ -132,4 +130,6 @@ public class ActionsForClients extends Thread
         out.writeObject("OK");
         out.flush();
     }
+
+
 }
