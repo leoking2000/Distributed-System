@@ -7,5 +7,5 @@ import java.io.ObjectOutputStream;
 
 public interface SenderAction
 {
-    void Send(Value v, ObjectInputStream in, ObjectOutputStream out);
+    void Send(Object v, ObjectInputStream in, ObjectOutputStream out);
 }

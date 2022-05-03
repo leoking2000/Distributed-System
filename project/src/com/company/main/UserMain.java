@@ -9,12 +9,12 @@ public class UserMain
     public static void main(String[] args)
     {
 
-        Logger.Init("user_log.txt");
+        //Logger.Init("user_log.txt");
 
         UserNode u = new UserNode("Leoking2000");
         u.start();
 
-        Logger.Close();
+        //Logger.Close();
 
     }
 }

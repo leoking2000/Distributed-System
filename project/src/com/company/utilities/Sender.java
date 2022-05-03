@@ -1,14 +1,9 @@
 package com.company.utilities;
 
 import com.company.EventDeliverySystem.Address;
-import com.company.EventDeliverySystem.ValueTypes.Value;
-import com.company.main.BrokerAddressList;
 
-import java.io.IOException;
-import java.io.ObjectInputStream;
-import java.io.ObjectOutputStream;
-import java.net.Socket;
-import java.net.UnknownHostException;
+import java.io.*;
+import java.net.*;
 
 /*
     A Sender can Send stuff to an Address.
@@ -17,13 +12,13 @@ public class Sender extends Thread
 {
     private final Address receiverAddress;
     private final SenderAction action;
-    private final Value value;
+    private final Object value;
 
     private Socket requestSocket = null;
     private ObjectOutputStream out = null;
     private ObjectInputStream in = null;
 
-    public Sender(Value value, Address receiver, SenderAction action)
+    public Sender(Object value, Address receiver, SenderAction action)
     {
         this.receiverAddress = receiver;
         this.action = action;

@@ -1,0 +1,18 @@
+Number of Brokers: 3
+
+Broker: 127.0.0.1 2340
+Broker: 127.0.0.1 2341
+Broker: 127.0.0.1 2342
+
+Number of Topics: 10
+
+Topics: aueb
+Topics: nasa_club
+Topics: i_hate_java_club
+Topics: i_love_cpp_club
+Topics: Arthur_Clarke_Club
+Topics: katanemimena
+Topics: Topic1000101
+Topics: Villager
+Topics: TheCherno
+Topics: ComputerGraphics

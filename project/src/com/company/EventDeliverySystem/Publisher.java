@@ -1,37 +1,15 @@
 package com.company.EventDeliverySystem;
 
 import com.company.EventDeliverySystem.ValueTypes.*;
-import com.company.main.BrokerAddressList;
 import com.company.utilities.Logger;
 import com.company.utilities.Sender;
 import com.company.utilities.SenderAction;
 
 import java.util.ArrayList;
 import java.io.*;
-import java.net.*;
 
 public class Publisher
 {
-    private final UserNode user;
-
-    public Publisher(UserNode user)
-    {
-        this.user = user;
-        Logger.LogInfo("Publisher for user " + user.getUserName() + " was created.");
-    }
-
-    private Address GetBrokerAddress(String topic)
-    {
-        // TODO make this not need BrokerAddressList!!!
-        // get the hash code of the topic
-        int h = topic.hashCode();
-        // mod the hash to get the index
-        int index = h % BrokerAddressList.NumberOfBrokers();
-
-        // return the address
-        return BrokerAddressList.Get(index);
-    }
-
     public void push(Value value)
     {
         // get topic name
@@ -43,22 +21,10 @@ public class Publisher
         sender.start();
     }
 
-    private class PublisherAction extends Thread implements SenderAction
+    private class PublisherAction implements SenderAction
     {
-        private Value v;
-        private ObjectInputStream in;
-        private ObjectOutputStream out;
         @Override
-        public void Send(Value v, ObjectInputStream in, ObjectOutputStream out)
-        {
-            this.v = v;
-            this.in = in;
-            this.out = out;
-            // start this thread
-            this.start();
-        }
-        @Override
-        public void run()
+        public void Send(Object v, ObjectInputStream in, ObjectOutputStream out)
         {
             try {
                 // tells the broker that it is going to receive a value
@@ -66,15 +32,15 @@ public class Publisher
                 out.flush();
 
                 // send metadata
-                out.writeObject(v.GetMetaData());
+                //out.writeObject(v.GetMetaData());
                 out.flush();
 
                 // send chunks
-                ArrayList<FileChunk> chunks = v.GenerateChunks();
-                for (FileChunk chunk : chunks) {
-                    out.writeObject(chunk);
-                    out.flush();
-                }
+                //ArrayList<FileChunk> chunks = v.GenerateChunks();
+                //for (FileChunk chunk : chunks) {
+                    //out.writeObject(chunk);
+                    //out.flush();
+                //}
 
                 try {
                     String respond = (String) in.readObject();
