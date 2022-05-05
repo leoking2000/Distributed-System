@@ -1,5 +1,7 @@
 package com.company.utilities;
 
+import com.company.EventDeliverySystem.Logger;
+
 import java.io.IOException;
 import java.net.ServerSocket;
 import java.net.Socket;

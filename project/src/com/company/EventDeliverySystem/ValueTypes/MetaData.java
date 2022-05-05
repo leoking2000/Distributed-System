@@ -2,6 +2,7 @@ package com.company.EventDeliverySystem.ValueTypes;
 
 import java.io.Serializable;
 import java.util.Date;
+
 /*
 the metadata of a Value
  */
@@ -41,6 +42,11 @@ public class MetaData implements Serializable
 
     public int getNumberOfChunks() {
         return numberOfChunks;
+    }
+
+    public String toString()
+    {
+        return "Metadata: " + DataTypeClassName + "topic: " + TopicName;
     }
 
 }

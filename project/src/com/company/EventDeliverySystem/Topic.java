@@ -1,11 +1,7 @@
 package com.company.EventDeliverySystem;
 
 import com.company.EventDeliverySystem.ValueTypes.Value;
-import com.company.utilities.Logger;
-import com.company.utilities.SenderAction;
 
-import java.io.ObjectInputStream;
-import java.io.ObjectOutputStream;
 import java.util.*;
 
 public class Topic
@@ -27,9 +23,9 @@ public class Topic
         values.add(v);
     }
 
-    void SendToRegisterUsers()
+    List<Address> GetRegisterUsers()
     {
-
+        return registeredUsers;
     }
 
     void printChat()
@@ -41,11 +37,4 @@ public class Topic
 
     }
 
-    private class TopicSenderAction implements SenderAction
-    {
-        @Override
-        public void Send(Object v, ObjectInputStream in, ObjectOutputStream out) {
-
-        }
-    }
 }

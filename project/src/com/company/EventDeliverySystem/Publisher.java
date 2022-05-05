@@ -1,11 +1,8 @@
 package com.company.EventDeliverySystem;
 
 import com.company.EventDeliverySystem.ValueTypes.*;
-import com.company.utilities.Logger;
-import com.company.utilities.Sender;
 import com.company.utilities.SenderAction;
 
-import java.util.ArrayList;
 import java.io.*;
 
 public class Publisher
@@ -15,10 +12,10 @@ public class Publisher
         // get topic name
         String topic = value.GetMetaData().getTopicName();
         // get the address of the broker that is responsible for this topic
-        Address broker = GetBrokerAddress(topic);
+        //Address broker = GetBrokerAddress(topic);
 
-        Sender sender = new Sender(value, broker, new PublisherAction());
-        sender.start();
+        //Sender sender = new Sender(value, broker, new PublisherAction());
+        //sender.start();
     }
 
     private class PublisherAction implements SenderAction

@@ -1,25 +1,25 @@
 package com.company.EventDeliverySystem;
 
 import com.company.EventDeliverySystem.ValueTypes.*;
-import com.company.utilities.*;
 import java.io.*;
-import java.net.Socket;
+import java.net.*;
 import java.util.*;
 
 public class Broker
 {
     private final int id;
     private final Configuration config;
-
     // store all the topics this broker is responsible.
     private final List<Topic> topics;
 
     public Broker(int broker_id)
     {
         id = broker_id;
-        config = new Configuration("config/config.txt");
+        config = new Configuration("config.txt");
 
-        // we get a synchronizedList because BrokerActionsForClients thread modifies it
+        Logger.LogInfo("Broker " + id + " was created.");
+
+        // we get a synchronizedList because ActionsForClients thread modifies it
         topics = Collections.synchronizedList( new ArrayList<Topic>() );
 
         // create the Topics
@@ -27,20 +27,51 @@ public class Broker
         for(String name : topics_names)
         {
             topics.add(new Topic(name));
+            Logger.LogInfo("Topic: " + name);
         }
-
-        Logger.LogInfo("Broker " + id + " was created.");
     }
 
     public void run()
     {
         Address broker_address = config.GetAddressOfBroker(id);
+        ServerSocket providerSocket = null;
 
-        Receiver receiver = new Receiver(broker_address.getPort(), new BrokerReceiverAction(this));
-        receiver.run();
+        Logger.LogInfo("Broker is Running.");
+
+        try
+        {
+            Socket connection = null;
+            providerSocket = new ServerSocket(broker_address.getPort(), 10);
+
+            while (true)
+            {
+                connection = providerSocket.accept();
+
+                Logger.LogInfo("Broker with port has Accepted connection.");
+                Thread t = new ActionForClients(connection, this);
+                t.start();
+            }
+        }
+        catch (IOException ioException)
+        {
+            ioException.printStackTrace();
+        }
+        finally
+        {
+            try
+            {
+                providerSocket.close();
+            }
+            catch (IOException ioException)
+            {
+                ioException.printStackTrace();
+            }
+        }
+
+
     }
 
-    public List<Topic> getChats()
+    public List<Topic> getTopicsList()
     {
         return topics;
     }
@@ -48,6 +79,7 @@ public class Broker
 
     private class ActionForClients extends Thread
     {
+        Socket socket;
         private ObjectInputStream in;
         private ObjectOutputStream out;
 
@@ -57,6 +89,7 @@ public class Broker
         {
             try
             {
+                socket = s;
                 out = new ObjectOutputStream(s.getOutputStream());
                 in = new ObjectInputStream(s.getInputStream());
             }
@@ -80,9 +113,9 @@ public class Broker
                 {
                     case "send config" -> SendConfig();
                     case "accept value" -> AcceptValue();
-                    case "send topic" -> {
+                    case "register topic" -> {
                         String topic = (String) in.readObject();
-                        SendChat(topic);
+                        RegisterToTopic(topic);
                     }
                 }
 
@@ -118,69 +151,109 @@ public class Broker
             // read metadata
             MetaData metaData = (MetaData) in.readObject();
 
+            // get the topic
+            Topic topic = GetTopic(metaData.getTopicName());
 
-
-            // read the file chunks
             ArrayList<FileChunk> chunks = new ArrayList<>();
-            for(int i = 0; i < metaData.getNumberOfChunks(); i++)
+            Socket[] consumerConnections = new Socket[topic.registeredUsers.size()];
+            ObjectOutputStream[] out_streams = new ObjectOutputStream[topic.registeredUsers.size()];
+
+            try
             {
-                chunks.add((FileChunk) in.readObject());
+                // create the connection to the consumers
+                for(int c = 0; c < topic.registeredUsers.size(); c++)
+                {
+                    Address a = topic.registeredUsers.get(c);
+                    consumerConnections[c] = new Socket(a.getIp(), a.getPort());
+                    out_streams[c] = new ObjectOutputStream(consumerConnections[c].getOutputStream());
+
+                    // send metadata
+                    out_streams[c].writeObject(metaData);
+                    out_streams[c].flush();
+                }
+
+                // read, store and send the file chunks
+                for(int i = 0; i < metaData.getNumberOfChunks(); i++)
+                {
+                    // read the fileChunk
+                    FileChunk chunk = (FileChunk) in.readObject();
+                    chunks.add(chunk); // store the chunk
+
+                    // send the fileChunk
+                    for(int c = 0; c < topic.registeredUsers.size(); c++)
+                    {
+                        out_streams[i].writeObject(chunk);
+                        out_streams[i].flush();
+                    }
+                }
+
+
+            } catch (UnknownHostException unknownHost) {
+                System.err.println("You are trying to connect to an unknown host!");
+            } catch (IOException ioException) {
+                ioException.printStackTrace();
+            }
+
+            // close the connection to consumer
+            try {
+                for(int i = 0; i < topic.registeredUsers.size(); i++)
+                {
+                    out_streams[i].close();
+                    consumerConnections[i].close();
+                }
+            } catch (IOException ioException) {
+                ioException.printStackTrace();
             }
 
             // recreate value
             Value v = Value.ReCreate(chunks, metaData);
-
-            if(v == null)
-            {
-                Logger.LogError("Could not recreate value");
-
-                out.writeObject("F");
-                out.flush();
-                return;
-            }
+            topic.addPost(v);
 
             Logger.LogInfo(v.toString());
+        }
 
-            // store value in the correct chat
-            List<Topic> topics = broker.getChats();
+        private void RegisterToTopic(String topicName) throws IOException, ClassNotFoundException {
 
-            String topic = v.GetMetaData().getTopicName();
-            Optional<Topic> chat = topics.stream().
-                    filter(p -> p.name.equals(topic)).
-                    findFirst();
+            Topic topic = GetTopic(topicName);
 
-            if(chat.isPresent()) {
-                chat.get().addPost(v);
+            Address user_address = (Address) in.readObject();
+            topic.registeredUsers.add(user_address);
+
+            out.writeObject(topic.values.size());
+            out.flush();
+
+            for(Value v : topic.values)
+            {
+                out.writeObject(v.GetMetaData());
+                out.flush();
+
+                ArrayList<FileChunk> chunks = v.GenerateChunks();
+                out.writeObject(chunks.size());
+                out.flush();
+
+                for(int i = 0; i < chunks.size(); i++)
+                {
+                    out.writeObject(chunks.get(i));
+                    out.flush();
+                }
+
+            }
+        }
+
+        private Topic GetTopic(String topicName)
+        {
+            // get the topic
+            List<Topic> topics = broker.getTopicsList();
+            Topic topic;
+            synchronized (topics)
+            {
+                topic = (topics.stream().
+                        filter(p -> p.name.equals(topicName)).
+                        findFirst()).get();
             }
 
-            out.writeObject("OK");
-            out.flush();
-        }
-
-        private void SendChat(String topic)
-        {
-
-        }
-
-
-    }
-
-    private class BrokerReceiverAction implements ReceiverAction
-    {
-        private final Broker broker;
-
-        public BrokerReceiverAction(Broker broker)
-        {
-            this.broker = broker;
-        }
-
-        @Override
-        public void HandleConnection(Socket s)
-        {
-            Thread t = new ActionForClients(s, broker);
-            t.start();
+            return topic;
         }
 
     }
-
 }

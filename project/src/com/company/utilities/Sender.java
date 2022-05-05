@@ -1,6 +1,7 @@
 package com.company.utilities;
 
 import com.company.EventDeliverySystem.Address;
+import com.company.EventDeliverySystem.Logger;
 
 import java.io.*;
 import java.net.*;
@@ -36,9 +37,9 @@ public class Sender extends Thread
             out = new ObjectOutputStream(requestSocket.getOutputStream());
             in = new ObjectInputStream(requestSocket.getInputStream());
 
-            Logger.LogInfo("Sending to address <" + receiverAddress + ">~ " + value);
+            //Logger.LogInfo("Sending to address <" + receiverAddress + ">~ " + value);
             action.Send(value, in, out);
-            Logger.LogInfo( value + " was Send to " + receiverAddress);
+            //Logger.LogInfo( value + " was Send to " + receiverAddress);
 
         } catch (UnknownHostException unknownHost) {
             System.err.println("You are trying to connect to an unknown host!");

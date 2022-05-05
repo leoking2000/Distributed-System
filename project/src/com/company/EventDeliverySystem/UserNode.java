@@ -1,7 +1,6 @@
 package com.company.EventDeliverySystem;
 
 import com.company.EventDeliverySystem.ValueTypes.Text;
-import com.company.utilities.Logger;
 
 import java.util.Scanner;
 

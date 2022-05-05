@@ -1,8 +1,4 @@
-package com.company.utilities;
-
-import java.io.IOException;
-import java.io.PrintWriter;
-import java.nio.charset.StandardCharsets;
+package com.company.EventDeliverySystem;
 
 public class Logger
 {

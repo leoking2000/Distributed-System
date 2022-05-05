@@ -58,7 +58,7 @@ public class Configuration
         if(!exists(topic)) return null;
 
         // get the hash code of the topic
-        int h = topic.hashCode();
+        int h = Math.abs(topic.hashCode());
         // mod the hash to get the index
         int index = h % brokersAddress.length;
 
