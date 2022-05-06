@@ -4,7 +4,7 @@ import java.io.*;
 import java.util.ArrayList;
 import java.util.Scanner;
 
-public class Configuration
+public class Configuration implements Serializable
 {
     private Address[] brokersAddress;
     private String[] topics;

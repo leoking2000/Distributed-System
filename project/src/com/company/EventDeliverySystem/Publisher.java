@@ -1,51 +1,104 @@
 package com.company.EventDeliverySystem;
 
 import com.company.EventDeliverySystem.ValueTypes.*;
-import com.company.utilities.SenderAction;
 
 import java.io.*;
+import java.net.*;
+import java.util.ArrayList;
 
 public class Publisher
 {
-    public void push(Value value)
+    private Configuration config;
+
+
+    public Configuration getConfiguration(Address broker)
+    {
+        GetConfiguration action = new GetConfiguration();
+        Sender s = new Sender(broker, action);
+        s.start();
+
+        try {
+            s.join();
+        } catch (InterruptedException e) {
+            throw new RuntimeException(e);
+        }
+
+        config = action.config;
+
+        return action.config;
+    }
+
+    public void Send(Value value)
     {
         // get topic name
         String topic = value.GetMetaData().getTopicName();
         // get the address of the broker that is responsible for this topic
-        //Address broker = GetBrokerAddress(topic);
+        Address broker = config.GetBrokerAddress(topic);
 
-        //Sender sender = new Sender(value, broker, new PublisherAction());
-        //sender.start();
+        SendValue action = new SendValue(value);
+        Sender s = new Sender(broker, action);
+        s.start();
+
+        try {
+            s.join();
+        } catch (InterruptedException e) {
+            throw new RuntimeException(e);
+        }
     }
 
-    private class PublisherAction implements SenderAction
+
+
+    private static class GetConfiguration implements SenderAction
     {
+        public Configuration config = null;
+
         @Override
-        public void Send(Object v, ObjectInputStream in, ObjectOutputStream out)
+        public void Send(ObjectInputStream in, ObjectOutputStream out)
+        {
+            try
+            {
+                out.writeObject("send config");
+                out.flush();
+
+                config = (Configuration) in.readObject();
+            }
+            catch (IOException | ClassNotFoundException e)
+            {
+                throw new RuntimeException(e);
+            }
+        }
+    }
+
+
+    private static class SendValue implements SenderAction
+    {
+        private final Value value;
+
+        public SendValue(Value v)
+        {
+            value = v;
+        }
+
+        @Override
+        public void Send(ObjectInputStream in, ObjectOutputStream out)
         {
             try {
                 // tells the broker that it is going to receive a value
-                out.writeObject("Accept Value");
+                out.writeObject("accept value");
                 out.flush();
 
                 // send metadata
-                //out.writeObject(v.GetMetaData());
+                out.writeObject(value.GetMetaData());
                 out.flush();
 
                 // send chunks
-                //ArrayList<FileChunk> chunks = v.GenerateChunks();
-                //for (FileChunk chunk : chunks) {
-                    //out.writeObject(chunk);
-                    //out.flush();
-                //}
-
-                try {
-                    String respond = (String) in.readObject();
-                    Logger.LogInfo("Server respond " + respond);
-                } catch (EOFException ignored) {
-                    Logger.LogError("Server did not give ");
+                ArrayList<FileChunk> chunks = value.GenerateChunks();
+                for (FileChunk chunk : chunks) {
+                    out.writeObject(chunk);
+                    out.flush();
                 }
-            }catch (IOException | ClassNotFoundException ioException)
+
+            }catch (IOException ioException)
             {
                 ioException.printStackTrace();
             }

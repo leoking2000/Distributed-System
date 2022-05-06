@@ -216,10 +216,17 @@ public class Broker
 
             Topic topic = GetTopic(topicName);
 
-            Address user_address = (Address) in.readObject();
-            topic.registeredUsers.add(user_address);
+            InetAddress addr = socket.getInetAddress();
+            int         port = socket.getPort();
+            Address user_address = new Address(addr.getHostAddress(), port);
 
-            out.writeObject(topic.values.size());
+            if(topic.registeredUsers.stream().noneMatch(a -> a.equals(user_address)))
+            {
+                topic.registeredUsers.add(user_address);
+            }
+
+
+            out.writeInt(topic.values.size());
             out.flush();
 
             for(Value v : topic.values)
@@ -228,8 +235,6 @@ public class Broker
                 out.flush();
 
                 ArrayList<FileChunk> chunks = v.GenerateChunks();
-                out.writeObject(chunks.size());
-                out.flush();
 
                 for(int i = 0; i < chunks.size(); i++)
                 {
