@@ -15,7 +15,7 @@ public class Logger
     public void Log(String tag, String msg)
     {
         String output = tag + ": " + msg;
-        System.err.println(output);
+        //System.err.println(output);
     }
 
     private Logger()

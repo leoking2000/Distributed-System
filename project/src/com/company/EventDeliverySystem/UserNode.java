@@ -21,6 +21,7 @@ public class UserNode
 
         config = publisher.getConfiguration(broker_address);
         consumer = new Consumer(config);
+        consumer.start();
 
         Logger.LogInfo("UserNode for user " + name + " was created.");
     }

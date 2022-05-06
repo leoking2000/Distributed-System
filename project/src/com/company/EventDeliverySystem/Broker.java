@@ -164,6 +164,7 @@ public class Broker
                 for(int c = 0; c < topic.registeredUsers.size(); c++)
                 {
                     Address a = topic.registeredUsers.get(c);
+                    Logger.LogInfo(a.toString());
                     consumerConnections[c] = new Socket(a.getIp(), a.getPort());
                     out_streams[c] = new ObjectOutputStream(consumerConnections[c].getOutputStream());
 
@@ -212,13 +213,15 @@ public class Broker
             Logger.LogInfo(v.toString());
         }
 
-        private void RegisterToTopic(String topicName) throws IOException, ClassNotFoundException {
+        private void RegisterToTopic(String topicName) throws IOException, ClassNotFoundException
+        {
 
             Topic topic = GetTopic(topicName);
 
             InetAddress addr = socket.getInetAddress();
             int         port = socket.getPort();
-            Address user_address = new Address(addr.getHostAddress(), port);
+            Address user_address = new Address(addr.getHostAddress(), 2251);
+            Logger.LogInfo("Regitser to topic" + topicName + " to " + user_address);
 
             if(topic.registeredUsers.stream().noneMatch(a -> a.equals(user_address)))
             {
