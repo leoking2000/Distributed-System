@@ -1,5 +1,6 @@
 package com.company.EventDeliverySystem;
 
+import com.company.EventDeliverySystem.ValueTypes.MultiMediaFile;
 import com.company.EventDeliverySystem.ValueTypes.Text;
 import com.company.EventDeliverySystem.ValueTypes.Value;
 
@@ -52,12 +53,18 @@ public class UserNode
             System.out.print("Enter text: ");
             String text = in.nextLine();
 
-            publisher.Send(new Text(text, user_name, topicname));
+            if(text.startsWith("file@"))
+            {
+                String file = text.replace("file@", "");
+                publisher.Send(new MultiMediaFile(file, user_name, topicname));
+            }
+            else
+            {
+                publisher.Send(new Text(text, user_name, topicname));
+            }
 
-            //in.nextLine();
-            // clear the console
-            //System.out.print("\033[H\033[2J");
-            //System.out.flush();
+            System.out.print("=========================================");
+            System.out.flush();
         }
 
     }

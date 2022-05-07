@@ -6,6 +6,7 @@ import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.util.ArrayList;
+
 /*
  this can be a photo or a video
  */
@@ -24,6 +25,8 @@ public class MultiMediaFile implements Value
     {
         int numberOfChunks;
 
+        String[] path = filepath.split("/");
+
         try
         {
             File file = new File(filepath);
@@ -37,7 +40,7 @@ public class MultiMediaFile implements Value
             numberOfChunks = 0;
         }
 
-        metadata = new MetaData(user, topic, "MultiMediaFile", numberOfChunks);
+        metadata = new MetaData(user, topic, "MultiMediaFile", numberOfChunks, path[path.length - 1]);
     }
 
     @Override

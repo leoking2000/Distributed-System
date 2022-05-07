@@ -13,6 +13,7 @@ public class MetaData implements Serializable
     private final String DataTypeClassName; // what type the Value is?
     private final Date dateCreated; // when was this Created
     private final int numberOfChunks; // how many chunks this value has
+    private final String filename;
 
     public MetaData(String userName, String topicName, String dataTypeClassName, int numberOfChunks)
     {
@@ -21,7 +22,19 @@ public class MetaData implements Serializable
         DataTypeClassName = dataTypeClassName;
         dateCreated = new Date();
         this.numberOfChunks = numberOfChunks;
+        filename = "";
     }
+
+    public MetaData(String userName, String topicName, String dataTypeClassName, int numberOfChunks, String filename)
+    {
+        UserName = userName;
+        TopicName = topicName;
+        DataTypeClassName = dataTypeClassName;
+        dateCreated = new Date();
+        this.numberOfChunks = numberOfChunks;
+        this.filename = filename;
+    }
+
 
     public String getUserName() {
         return UserName;
@@ -42,6 +55,10 @@ public class MetaData implements Serializable
 
     public int getNumberOfChunks() {
         return numberOfChunks;
+    }
+
+    public String getFilename() {
+        return filename;
     }
 
     public String toString()

@@ -134,7 +134,15 @@ public class Consumer extends Thread
                     chunks.add((FileChunk) in.readObject());
                 }
 
-                consumer.FindTopic(metaData.getTopicName()).values.add(Value.ReCreate(chunks, metaData));
+                Value v = Value.ReCreate(chunks, metaData);
+                consumer.FindTopic(metaData.getTopicName()).values.add(v);
+
+                // if the value is a MultiMediaFile
+                if(v instanceof MultiMediaFile)
+                {
+                    // store the file
+                    FileChunk.Store(metaData.getFilename(), chunks);
+                }
 
             }
             catch (IOException | ClassNotFoundException e)
@@ -200,6 +208,13 @@ public class Consumer extends Thread
                     }
 
                     values[i] = Value.ReCreate(chunks, metaData);
+
+                    // if the value is a MultiMediaFile
+                    if(values[i] instanceof MultiMediaFile)
+                    {
+                        // store the file
+                        FileChunk.Store(metaData.getFilename(), chunks);
+                    }
                 }
 
             }
