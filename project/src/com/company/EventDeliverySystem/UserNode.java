@@ -13,14 +13,14 @@ public class UserNode
     private final Publisher publisher;
     private final Consumer consumer;
 
-    public UserNode(String name, Address broker_address)
+    public UserNode(int id, String name, Address broker_address)
     {
         user_name = name;
 
         publisher = new Publisher();
 
         config = publisher.getConfiguration(broker_address);
-        consumer = new Consumer(config);
+        consumer = new Consumer(config, id);
         consumer.start();
 
         Logger.LogInfo("UserNode for user " + name + " was created.");
@@ -54,10 +54,10 @@ public class UserNode
 
             publisher.Send(new Text(text, user_name, topicname));
 
-            in.nextLine();
+            //in.nextLine();
             // clear the console
-            System.out.print("\033[H\033[2J");
-            System.out.flush();
+            //System.out.print("\033[H\033[2J");
+            //System.out.flush();
         }
 
     }

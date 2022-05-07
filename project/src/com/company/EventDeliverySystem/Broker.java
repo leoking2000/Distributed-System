@@ -220,7 +220,7 @@ public class Broker
 
             InetAddress addr = socket.getInetAddress();
             int         port = socket.getPort();
-            Address user_address = new Address(addr.getHostAddress(), 2251);
+            Address user_address = new Address(addr.getHostAddress(), in.readInt());
             Logger.LogInfo("Regitser to topic" + topicName + " to " + user_address);
 
             if(topic.registeredUsers.stream().noneMatch(a -> a.equals(user_address)))

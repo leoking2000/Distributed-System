@@ -14,10 +14,14 @@ public class Consumer extends Thread
 
     public List<ConsumerTopic> topics;
 
-    public Consumer(Configuration config)
+    private final int port;
+
+    public Consumer(Configuration config, int id)
     {
         this.config = config;
         topics = Collections.synchronizedList(new ArrayList<>());
+
+        port = 2250 + id;
     }
 
     public void run()
@@ -29,7 +33,7 @@ public class Consumer extends Thread
         try
         {
             Socket connection = null;
-            providerSocket = new ServerSocket(2251, 10);
+            providerSocket = new ServerSocket(port, 10);
 
             while (true)
             {
@@ -62,7 +66,7 @@ public class Consumer extends Thread
     public void Register(String topic)
     {
         Address broker = config.GetBrokerAddress(topic);
-        RegisterToTopic action = new RegisterToTopic(topic);
+        RegisterToTopic action = new RegisterToTopic(topic, port);
 
         Sender s = new Sender(broker, action);
         s.start();
@@ -99,7 +103,7 @@ public class Consumer extends Thread
         Socket socket;
         private ObjectInputStream in;
 
-        private Consumer consumer;
+        private final Consumer consumer;
 
         public ActionNewValue(Socket s, Consumer c)
         {
@@ -159,9 +163,12 @@ public class Consumer extends Thread
 
         public Value[] values;
 
-        public RegisterToTopic(String topic)
+        public final int port;
+
+        public RegisterToTopic(String topic, int port)
         {
             this.topic = topic;
+            this.port = port;
         }
 
         @Override
@@ -173,6 +180,9 @@ public class Consumer extends Thread
                 out.flush();
 
                 out.writeObject(topic);
+                out.flush();
+
+                out.writeInt(port);
                 out.flush();
 
                 int numberOfValues = in.readInt();

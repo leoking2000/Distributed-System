@@ -8,10 +8,11 @@ public class UserMain
     public static void main(String[] args)
     {
         String userName = args[0];
-        String ip_broker = args[1];
-        int port = Integer.parseInt(args[2]);
+        int id = Integer.parseInt(args[1]);
+        String ip_broker = args[2];
+        int port = Integer.parseInt(args[3]);
 
-        UserNode u = new UserNode(userName, new Address(ip_broker, port));
+        UserNode u = new UserNode(id, userName, new Address(ip_broker, port));
         u.run();
 
 
