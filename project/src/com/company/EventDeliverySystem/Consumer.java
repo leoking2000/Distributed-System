@@ -2,11 +2,8 @@ package com.company.EventDeliverySystem;
 
 import com.company.EventDeliverySystem.ValueTypes.*;
 import java.io.*;
-import java.net.ServerSocket;
-import java.net.Socket;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
+import java.net.*;
+import java.util.*;
 
 public class Consumer extends Thread
 {
@@ -28,8 +25,6 @@ public class Consumer extends Thread
     {
         ServerSocket providerSocket = null;
 
-        Logger.LogInfo("Consumer is Running.");
-
         try
         {
             Socket connection = null;
@@ -39,7 +34,6 @@ public class Consumer extends Thread
             {
                 connection = providerSocket.accept();
 
-                Logger.LogInfo("Broker with port has Accepted connection.");
                 Thread t = new ActionNewValue(connection, this);
                 t.start();
             }
@@ -126,6 +120,8 @@ public class Consumer extends Thread
             try
             {
                 MetaData metaData = (MetaData) in.readObject();
+
+                Logger.Log("Consumer", "has accepted new value with \n" + metaData.toString());
 
                 ArrayList<FileChunk> chunks = new ArrayList<>();
 

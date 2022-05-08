@@ -63,7 +63,12 @@ public class MetaData implements Serializable
 
     public String toString()
     {
-        return "Metadata: " + DataTypeClassName + "topic: " + TopicName;
+        return "Metadata: \n" +
+                "UserName: " + UserName + "\n" +
+                "Topic: " + TopicName + "\n" +
+                "DataType " + DataTypeClassName + "\n" +
+                "number of chunks " + numberOfChunks + "\n" +
+                "filename: " + filename + "\n";
     }
 
 }

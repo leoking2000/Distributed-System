@@ -93,8 +93,8 @@ public class Publisher
 
                 // send chunks
                 ArrayList<FileChunk> chunks = value.GenerateChunks();
-                for (FileChunk chunk : chunks) {
-                    out.writeObject(chunk);
+                for (int i = 0; i < value.GetMetaData().getNumberOfChunks(); i++) {
+                    out.writeObject(chunks.get(i));
                     out.flush();
                 }
 

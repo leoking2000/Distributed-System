@@ -22,8 +22,6 @@ public class Sender extends Thread
     {
         this.receiverAddress = receiver;
         this.action = action;
-
-        Logger.LogInfo("Sender to send to " + receiver + " was created.");
     }
 
     public void run()

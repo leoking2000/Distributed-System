@@ -24,7 +24,7 @@ public class UserNode
         consumer = new Consumer(config, id);
         consumer.start();
 
-        Logger.LogInfo("UserNode for user " + name + " was created.");
+        Logger.Log("","UserNode for user " + name + " was created.");
     }
 
     public void run()
@@ -41,6 +41,8 @@ public class UserNode
         String topicname = in.nextLine();
         consumer.Register(topicname);
 
+        in.nextLine();
+
         Consumer.ConsumerTopic topic = consumer.FindTopic(topicname);
 
         while (true)
@@ -50,12 +52,13 @@ public class UserNode
                 System.out.println(v);
             }
 
-            System.out.print("Enter text: ");
+            System.out.print("\nEnter text: ");
             String text = in.nextLine();
 
             if(text.startsWith("file@"))
             {
                 String file = text.replace("file@", "");
+                Logger.Log("", "sending file " + file);
                 publisher.Send(new MultiMediaFile(file, user_name, topicname));
             }
             else
@@ -63,7 +66,11 @@ public class UserNode
                 publisher.Send(new Text(text, user_name, topicname));
             }
 
-            System.out.print("=========================================");
+            in.nextLine();
+            in.nextLine();
+            in.nextLine();
+
+            System.out.print("=========================================\n");
             System.out.flush();
         }
 

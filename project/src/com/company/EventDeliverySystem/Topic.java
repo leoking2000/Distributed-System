@@ -28,13 +28,4 @@ public class Topic
         return registeredUsers;
     }
 
-    void printChat()
-    {
-        for(Value v : values)
-        {
-            Logger.LogInfo(v.toString());
-        }
-
-    }
-
 }

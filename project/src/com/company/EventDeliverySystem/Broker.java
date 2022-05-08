@@ -17,7 +17,7 @@ public class Broker
         id = broker_id;
         config = new Configuration("config.txt");
 
-        Logger.LogInfo("Broker " + id + " was created.");
+        Logger.Log("INFO","Broker " + id + " was created.");
 
         // we get a synchronizedList because ActionsForClients thread modifies it
         topics = Collections.synchronizedList( new ArrayList<Topic>() );
@@ -27,7 +27,7 @@ public class Broker
         for(String name : topics_names)
         {
             topics.add(new Topic(name));
-            Logger.LogInfo("Topic: " + name);
+            Logger.Log("INFO","Topic: " + name);
         }
     }
 
@@ -36,7 +36,7 @@ public class Broker
         Address broker_address = config.GetAddressOfBroker(id);
         ServerSocket providerSocket = null;
 
-        Logger.LogInfo("Broker is Running.");
+        Logger.Log("INFO","Broker is Running.");
 
         try
         {
@@ -47,7 +47,6 @@ public class Broker
             {
                 connection = providerSocket.accept();
 
-                Logger.LogInfo("Broker with port has Accepted connection.");
                 Thread t = new ActionForClients(connection, this);
                 t.start();
             }
@@ -92,6 +91,7 @@ public class Broker
                 socket = s;
                 out = new ObjectOutputStream(s.getOutputStream());
                 in = new ObjectInputStream(s.getInputStream());
+                Logger.Log("INFO","Broker has Opened connection.");
             }
             catch (IOException e)
             {
@@ -143,13 +143,18 @@ public class Broker
         {
             out.writeObject(config);
             out.flush();
+            Logger.Log("INFO", "Broker Has Send config!!!");
         }
 
 
         private void AcceptValue() throws IOException, ClassNotFoundException
         {
+            Logger.Log("INFO", "AcceptValue");
+
             // read metadata
             MetaData metaData = (MetaData) in.readObject();
+
+            Logger.Log("INFO", metaData.toString());
 
             // get the topic
             Topic topic = GetTopic(metaData.getTopicName());
@@ -161,10 +166,12 @@ public class Broker
             try
             {
                 // create the connection to the consumers
+                Logger.Log("INFO", "Sending data to " + topic.registeredUsers.size() + "users");
                 for(int c = 0; c < topic.registeredUsers.size(); c++)
                 {
                     Address a = topic.registeredUsers.get(c);
-                    Logger.LogInfo(a.toString());
+                    Logger.Log("INFO", "Sending to address" + a.toString());
+
                     consumerConnections[c] = new Socket(a.getIp(), a.getPort());
                     out_streams[c] = new ObjectOutputStream(consumerConnections[c].getOutputStream());
 
@@ -183,8 +190,8 @@ public class Broker
                     // send the fileChunk
                     for(int c = 0; c < topic.registeredUsers.size(); c++)
                     {
-                        out_streams[i].writeObject(chunk);
-                        out_streams[i].flush();
+                        out_streams[c].writeObject(chunk);
+                        out_streams[c].flush();
                     }
                 }
 
@@ -210,7 +217,7 @@ public class Broker
             Value v = Value.ReCreate(chunks, metaData);
             topic.addPost(v);
 
-            Logger.LogInfo(v.toString());
+            Logger.Log("INFO", "Value has been handle!!!");
         }
 
         private void RegisterToTopic(String topicName) throws IOException, ClassNotFoundException
@@ -221,7 +228,8 @@ public class Broker
             InetAddress addr = socket.getInetAddress();
             int         port = socket.getPort();
             Address user_address = new Address(addr.getHostAddress(), in.readInt());
-            Logger.LogInfo("Regitser to topic" + topicName + " to " + user_address);
+
+            Logger.Log("INFO", "user " + user_address.toString() + "wand to be registered");
 
             if(topic.registeredUsers.stream().noneMatch(a -> a.equals(user_address)))
             {
@@ -246,6 +254,8 @@ public class Broker
                 }
 
             }
+
+            Logger.Log("INFO", "Register to topic has been handle!!!");
         }
 
         private Topic GetTopic(String topicName)

@@ -1,8 +1,7 @@
 package com.company.EventDeliverySystem.ValueTypes;
 
 import java.io.*;
-import java.nio.file.Files;
-import java.nio.file.StandardOpenOption;
+import java.nio.file.*;
 import java.util.ArrayList;
 
 /*
@@ -97,7 +96,7 @@ public class FileChunk implements Serializable
     {
         byte[] bytesToWrite = GetData(chunks);
 
-        Files.write( (new File(path)).toPath(), bytesToWrite, StandardOpenOption.CREATE_NEW);
+        Files.write( (new File(path)).toPath(), bytesToWrite, StandardOpenOption.CREATE);
     }
 
     private final int index;

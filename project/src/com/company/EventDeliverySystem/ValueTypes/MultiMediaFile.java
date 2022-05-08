@@ -13,7 +13,7 @@ import java.util.ArrayList;
 public class MultiMediaFile implements Value
 {
     private byte[] data;
-    private final MetaData metadata;
+    private MetaData metadata;
 
     public MultiMediaFile(ArrayList<FileChunk> chunks, MetaData metaData)
     {
@@ -23,24 +23,26 @@ public class MultiMediaFile implements Value
 
     public MultiMediaFile(String filepath, String user, String topic)
     {
-        int numberOfChunks;
-
         String[] path = filepath.split("/");
 
         try
         {
             File file = new File(filepath);
             data = Files.readAllBytes(file.toPath());
-            numberOfChunks = data.length;
+
+            int numberOfChunks = GenerateChunks().size();
+            metadata = new MetaData(user, topic, "MultiMediaFile", numberOfChunks, path[path.length - 1]);
+
+            Logger.Log("INFO", metadata.toString());
         }
         catch (IOException e)
         {
-            Logger.LogError("MultiMediaFile " + filepath + "Failed to load!!!");
+            Logger.Log("ERROR","MultiMediaFile " + filepath + "Failed to load!!!");
             data = null;
-            numberOfChunks = 0;
+            metadata = null;
+            e.printStackTrace();
+            assert true;
         }
-
-        metadata = new MetaData(user, topic, "MultiMediaFile", numberOfChunks, path[path.length - 1]);
     }
 
     @Override
