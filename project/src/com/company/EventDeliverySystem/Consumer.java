@@ -71,7 +71,13 @@ public class Consumer extends Thread
             throw new RuntimeException(e);
         }
 
-        topics.add(new ConsumerTopic(topic, new ArrayList<Value>(List.of(action.values))));
+        ArrayList<Value> history = new ArrayList<>();
+        for(Value v : action.values)
+        {
+            history.add(v);
+        }
+
+        topics.add(new ConsumerTopic(topic, new ArrayList<Value>(history)));
 
     }
 

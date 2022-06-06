@@ -111,12 +111,18 @@ public class Broker
 
                 switch (request)
                 {
-                    case "send config" -> SendConfig();
-                    case "accept value" -> AcceptValue();
-                    case "register topic" -> {
-                        String topic = (String) in.readObject();
-                        RegisterToTopic(topic);
-                    }
+                    case "send config":
+                        SendConfig();
+                        break;
+                    case "accept value":
+                        AcceptValue();
+                        break;
+                    case "register topic":
+                        {
+                            String topic = (String) in.readObject();
+                            RegisterToTopic(topic);
+                        }
+                        break;
                 }
 
             }

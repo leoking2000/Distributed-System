@@ -15,10 +15,14 @@ public interface Value extends Serializable
     // the broker needs this to reCreate the value
     static Value ReCreate(ArrayList<FileChunk> chunks, MetaData metaData)
     {
-        return switch (metaData.getDataTypeClassName()) {
-            case "Text" -> new Text(chunks, metaData);
-            case "MultiMediaFile" -> new MultiMediaFile(chunks, metaData);
-            default -> null;
-        };
+        switch (metaData.getDataTypeClassName())
+        {
+            case "Text":
+                return new Text(chunks, metaData);
+            case "MultiMediaFile":
+                return new MultiMediaFile(chunks, metaData);
+            default:
+                return null;
+        }
     }
 }
